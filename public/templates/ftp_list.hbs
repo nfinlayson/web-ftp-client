@@ -53,8 +53,9 @@
                 <td width='9%'>{{#humanFileSize size}}{{/humanFileSize}}</td>
                 <td>{{#formattedDate time}}{{/formattedDate}}</td>
                 <td width='25%'>
-                
+                <!--
                   <input type='button' class="btn btn-xs action" value="Rename" data-action='rename' data-name='{{name}}'/>
+                  -->
 
                   {{#when type 'eq' 'File'}}
                     <span><a href='/api/ftp/download?path={{../dir}}&name={{name}}' target='_blank' class="btn btn-xs action" value="Downoad" data-action='download' data-name='{{name}}'>Download </a></span>

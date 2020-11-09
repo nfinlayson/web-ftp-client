@@ -1,4 +1,6 @@
 var express = require('express')
+  , favicon = require('serve-favicon')
+  , bodyParser = require('body-parser')
   , http = require('http')
   , path = require('path')
   , exec = require("child_process").exec
@@ -9,19 +11,13 @@ var express = require('express')
   
 
 var server = express();
-// var ImageProcessorCron = require('./api/cron/image_processor_cron');
-server.configure('staging', function() {
-  server.config = require('./config/staging').cloud;
-});
-server.configure('master', function() {
-  server.config = require('./config/master').cloud;
-});
-server.use(express.bodyParser({ limit: '50mb' }));
+
+//server.use(express.bodyParser({ limit: '50mb' }));
 server.engine('html', require('ejs').renderFile);
 server.use(express.static(__dirname + '/public'));
 server.use(cookieParser('secret12'))
-server.use(express.favicon("favicon.ico")); 
-server.use(express.bodyParser({ limit: '50mb' }));
+server.use(favicon("favicon.ico")); 
+server.use(bodyParser.json({ limit: '50mb', extended: true }));
 console.log('Config name',config.name);
 server.use(session({
     secret: 'secret12',
@@ -31,7 +27,7 @@ server.use(session({
     resave: false
 }));
 
-
+/*
 var consoleHolder = console;
 function debug(bool){
     if(!bool){
@@ -41,7 +37,9 @@ function debug(bool){
     }else
         console = consoleHolder;
 }
+
 debug(config.debug)
+*/
 require('./config/routes')(server);
 
  // ImageProcessorCron(server)
@@ -65,15 +63,3 @@ global.dirname = __dirname;
 http.createServer(server).listen(process.env.PORT || config.port, function(){
   console.log("Web Ftp server listening on port =====|    " + (process.env.PORT || config.port));
 });
-
-// process.on('uncaughtException', function(err) {
-//   console.log("Inside uncaughtException block error - - " + JSON.stringify(err));
-//   // for (key in global.cloudObj) {
-//   //   console.log("@@@@@ @@@@@ @@@@@ @@@@@ @@@@@ ");
-//   //   console.log(key);
-//   //   console.log(cloudObj[key]);
-//   //   console.log(cloudObj[key].isRunning);
-//   //   console.log("@@@@@ @@@@@ @@@@@ @@@@@ @@@@@ ");
-//   //   cloudObj[key].isRunning = false;
-//   // }
-// })

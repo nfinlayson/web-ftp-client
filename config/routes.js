@@ -1,4 +1,4 @@
-var config = require('config').cloud
+var config = require('config')
   , path = require('path')
   , ftpsController = require('../api/controllers/ftps_controller')
   , isLoggedin = function(req,res,next){
@@ -24,13 +24,14 @@ module.exports = function(app) {
   
   //connect to ftp client
   app.post('/api/ftp/connect',ftpsController.connect)  
+
   app.get('/api/isloggedin',function (req,res,next){
     console.log('req session',req.session);
     console.log('req cookie',getCookie('connect.sid',req.headers.cookie))
-
     if(req.session.ftp) res.json(req.session.ftp)
     else res.status(401).json({loggedin:false})
   })
+
   app.post('/api/ftp/logout',function (req,res,next){
     delete req.session.destroy();
     res.json({success:true})

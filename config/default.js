@@ -5,7 +5,7 @@
  */
 
 module.exports = {
-  debug: true,
+  debug: false,
   name:'default',
   port:3000
 };
