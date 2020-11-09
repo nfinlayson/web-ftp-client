@@ -1,6 +1,7 @@
 var express = require('express')
   , favicon = require('serve-favicon')
   , bodyParser = require('body-parser')
+  , fileUpload = require('express-fileupload')
   , http = require('http')
   , path = require('path')
   , exec = require("child_process").exec
@@ -18,6 +19,7 @@ server.use(express.static(__dirname + '/public'));
 server.use(cookieParser('secret12'))
 server.use(favicon("favicon.ico")); 
 server.use(bodyParser.json({ limit: '50mb', extended: true }));
+server.use(fileUpload({ limits: { fileSize: 50 * 1024 * 1024 }, }));
 console.log('Config name',config.name);
 server.use(session({
     secret: 'secret12',

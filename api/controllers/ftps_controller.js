@@ -55,14 +55,26 @@ ftps.connect = function (req, res, next) {
 ftps.upload = function (req, res, next) {
   console.log('req files', req.files)
   console.log('req body', req.body)
-  // return res.send('successful')
-  // async.each
 
   try {
     var ftp = new Jsftp(req.session.ftp);
+    async.eachSeries(req.files.uploadfile, (file, callback) => {
+      var filename = file.name;
+      var fileData = file.data;
+      console.log('uploadfile', req.body.dir + filename)
+      ftp.put(fileData, req.body.dir + filename, function (hadError) {
+        console.log("done put " + filename)
+        if (hadError) callback(hadError)
+        else callback();
+      });
+      
+      //callback();
+    });
   } catch (e) {
+    console.log("Errored",e)
     return next({ errors: [e], status: 500 })
   }
+  /*
   async.eachSeries(req.files.uploadfile, function (file, callback) {
     var filePath = file.path;
     var filename = file.originalFilename;
@@ -73,10 +85,12 @@ ftps.upload = function (req, res, next) {
       else callback();
     });
   }, function (err) {
+    console.log("got ehre")
     quitConn(ftp)
     if (err) return next(err)
     else res.json({ message: 'Files Uploaded Successfully' })
   })
+*/
 }
 
 ftps.list = function (req, res, next) {
@@ -85,7 +99,7 @@ ftps.list = function (req, res, next) {
   try {
     var ftp = new Jsftp(req.session.ftp)
     ftp.ls(req.body.dir || '/', function (err, files) {
-      console.log("done ls", files)
+      //console.log("done ls", files)
       quitConn(ftp)
       if (err) return next(err)
       else {
@@ -191,7 +205,7 @@ ftps.delete = function (req, res, next) {
     console.log('err', err)
     return next({ errors: [e], status: 500 })
   }
-  ftp.raw.dele(req.body.path + req.body.name, function (err, data) {
+  ftp.raw("dele",req.body.path + req.body.name, function (err, data) {
     if (err) return next(err)
     else res.json({ message: 'File Deleted' })
   })
